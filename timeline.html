@@ -81,6 +81,92 @@
       background: white;
     }
 
+    .multi-filter {
+  position: relative;
+  min-width: 180px;
+}
+
+.multi-filter summary {
+  height: 36px;
+  display: flex;
+  align-items: center;
+
+  padding: 0 10px;
+
+  border: 1px solid var(--border);
+  border-radius: 6px;
+
+  background: white;
+  cursor: pointer;
+
+  font-size: 13px;
+
+  list-style: none;
+}
+
+.multi-filter summary::-webkit-details-marker {
+  display: none;
+}
+
+.multi-filter summary::after {
+  content: "▼";
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.multi-filter[open] summary {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.multi-filter-options {
+  position: absolute;
+  z-index: 50;
+
+  top: 36px;
+  left: 0;
+
+  width: 100%;
+  min-width: 220px;
+  max-height: 260px;
+
+  overflow-y: auto;
+
+  background: white;
+
+  border: 1px solid var(--border);
+  border-top: 0;
+
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.multi-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 10px;
+
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.multi-option:hover {
+  background: #F4F5F7;
+}
+
+.multi-option input {
+  width: auto;
+  height: auto;
+  margin: 0;
+}
+
+.multi-option-label {
+  flex: 1;
+}
+
     .legend {
       display: flex;
       flex-wrap: wrap;
