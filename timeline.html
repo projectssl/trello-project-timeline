@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Project Timeline</title>
 
   <style>
@@ -14,217 +15,356 @@
       --ivory: #FFFBF2;
       --brass: #887255;
 
-      --due-soon: #FFF4CC;
-      --overdue: #F8D7D2;
-      --border: #D9DDE3;
       --text: #172B4D;
-      --muted: #6B778C;
+      --muted: #626F86;
+
+      --border: #DFE1E6;
+      --border-light: #EBECF0;
+
+      --background: #F7F8F9;
+      --panel: #FFFFFF;
+      --hover: #F7F8F9;
+
+      --due-soon: #FFF7D6;
+      --due-soon-border: #D6A400;
+      --due-soon-text: #7F5F01;
+
+      --overdue: #FFEBE6;
+      --overdue-border: #AE2A19;
+      --overdue-text: #AE2A19;
+
+      --blue: #0C66E4;
+      --blue-hover: #0055CC;
 
       --day-width: 42px;
       --left-width: 310px;
-      --row-height: 72px;
+      --row-height: 76px;
     }
 
     * {
       box-sizing: border-box;
     }
 
+    html,
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+      font-size: 14px;
       color: var(--text);
-      background: #F7F8FA;
+      background: var(--background);
     }
 
     .page {
-      padding: 18px;
+      padding: 14px 16px 18px;
     }
+
+    /* ======================================================
+       TOOLBAR
+    ====================================================== */
 
     .toolbar {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
       align-items: end;
+      gap: 8px;
+
+      margin-bottom: 10px;
 
       background: white;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-
-    .filter {
-      min-width: 160px;
-    }
-
-    .filter.search {
-      min-width: 240px;
-      flex: 1;
-    }
-
-    label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--muted);
-      margin-bottom: 5px;
-    }
-
-    input,
-    select {
-      width: 100%;
-      height: 36px;
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 0 10px;
+
+      padding: 10px;
+    }
+
+    .filter-search {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .filter-label {
+      display: block;
+      margin-bottom: 4px;
+
+      font-size: 11px;
+      font-weight: 600;
+
+      color: var(--muted);
+    }
+
+    .toolbar input,
+    .toolbar button {
+      height: 34px;
+
+      border: 1px solid var(--border);
+      border-radius: 3px;
+
       background: white;
+      color: var(--text);
+
+      font: inherit;
+
+      padding: 6px 9px;
+    }
+
+    .toolbar input {
+      width: 100%;
+    }
+
+    .toolbar button {
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .toolbar button:hover {
+      background: var(--hover);
+    }
+
+    .clear-button {
+      align-self: end;
+    }
+
+    /* ======================================================
+       MULTI SELECT FILTERS
+    ====================================================== */
+
+    .filter-holder {
+      display: flex;
+      flex-direction: column;
+      min-width: 145px;
     }
 
     .multi-filter {
-  position: relative;
-  min-width: 180px;
-}
+      position: relative;
+      display: inline-block;
+    }
 
-.multi-filter summary {
-  height: 36px;
-  display: flex;
-  align-items: center;
+    .multi-filter-button {
+      width: 100%;
+      min-width: 145px;
+      max-width: 210px;
 
-  padding: 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
-  border: 1px solid var(--border);
-  border-radius: 6px;
+      gap: 10px;
 
-  background: white;
-  cursor: pointer;
+      white-space: nowrap;
+    }
 
-  font-size: 13px;
+    .multi-filter-button.active {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
 
-  list-style: none;
-}
+    .multi-filter-arrow {
+      font-size: 10px;
+      color: var(--muted);
+    }
 
-.multi-filter summary::-webkit-details-marker {
-  display: none;
-}
+    .multi-filter-menu {
+      position: absolute;
+      z-index: 100;
 
-.multi-filter summary::after {
-  content: "▼";
-  margin-left: auto;
-  font-size: 10px;
-  color: var(--muted);
-}
+      top: calc(100% + 4px);
+      left: 0;
 
-.multi-filter[open] summary {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
+      width: 260px;
+      max-height: 360px;
 
-.multi-filter-options {
-  position: absolute;
-  z-index: 50;
+      display: none;
+      overflow: hidden;
 
-  top: 36px;
-  left: 0;
+      background: #FFFFFF;
 
-  width: 100%;
-  min-width: 220px;
-  max-height: 260px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
 
-  overflow-y: auto;
+      box-shadow:
+        0 8px 12px rgba(9, 30, 66, 0.15),
+        0 0 1px rgba(9, 30, 66, 0.31);
+    }
 
-  background: white;
+    .multi-filter.open .multi-filter-menu {
+      display: block;
+    }
 
-  border: 1px solid var(--border);
-  border-top: 0;
+    .multi-filter-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
 
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-}
+      padding: 8px;
 
-.multi-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+      border-bottom: 1px solid var(--border-light);
+    }
 
-  padding: 8px 10px;
+    .multi-filter-actions button {
+      height: 28px;
 
-  cursor: pointer;
-  font-size: 13px;
-}
+      padding: 3px 8px;
 
-.multi-option:hover {
-  background: #F4F5F7;
-}
+      border: 0;
 
-.multi-option input {
-  width: auto;
-  height: auto;
-  margin: 0;
-}
+      background: transparent;
+      color: var(--blue);
 
-.multi-option-label {
-  flex: 1;
-}
+      font-size: 12px;
+    }
+
+    .multi-filter-actions button:hover {
+      background: var(--hover);
+      color: var(--blue-hover);
+    }
+
+    .multi-filter-options {
+      max-height: 285px;
+      overflow-y: auto;
+
+      padding: 4px 0;
+    }
+
+    .multi-filter-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      min-height: 34px;
+
+      padding: 6px 10px;
+
+      cursor: pointer;
+
+      color: var(--text);
+
+      font-size: 13px;
+    }
+
+    .multi-filter-option:hover {
+      background: var(--hover);
+    }
+
+    .multi-filter-option input {
+      width: 16px;
+      height: 16px;
+
+      flex: 0 0 16px;
+
+      margin: 0;
+      padding: 0;
+    }
+
+    .multi-filter-option-text {
+      flex: 1;
+    }
+
+    .filter-label-swatch {
+      width: 12px;
+      height: 12px;
+
+      flex: 0 0 12px;
+
+      border-radius: 2px;
+    }
+
+    /* ======================================================
+       LEGEND
+    ====================================================== */
 
     .legend {
       display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      margin-left: auto;
-      font-size: 12px;
-      color: var(--muted);
       align-items: center;
+      flex-wrap: wrap;
+
+      gap: 12px;
+
+      margin-left: auto;
+
+      font-size: 11px;
+      color: var(--muted);
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .legend-current {
-      width: 36px;
-      height: 14px;
-      border-radius: 4px;
+      width: 30px;
+      height: 12px;
+
+      border-radius: 3px;
+
       background: var(--moss);
     }
 
     .legend-baseline {
-      width: 36px;
-      height: 7px;
+      width: 30px;
+      height: 6px;
+
       border-radius: 5px;
+
       background: var(--governor);
     }
 
     .legend-due {
-      width: 15px;
-      height: 15px;
-      border-radius: 3px;
+      width: 13px;
+      height: 13px;
+
+      border-radius: 2px;
+
       background: var(--due-soon);
-      border: 1px solid #D6A400;
+      border: 1px solid var(--due-soon-border);
     }
 
     .legend-overdue {
-      width: 15px;
-      height: 15px;
-      border-radius: 3px;
+      width: 13px;
+      height: 13px;
+
+      border-radius: 2px;
+
       background: var(--overdue);
-      border: 1px solid #A63A2B;
+      border: 1px solid var(--overdue-border);
     }
 
     .summary {
-      margin-bottom: 10px;
-      font-size: 13px;
+      margin: 0 0 8px;
+
       color: var(--muted);
+
+      font-size: 12px;
     }
 
+    /* ======================================================
+       TIMELINE SHELL
+    ====================================================== */
+
     .timeline-shell {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 10px;
+      width: 100%;
+
       overflow: auto;
-      max-height: calc(100vh - 180px);
+
+      max-height: calc(100vh - 150px);
+
+      background: white;
+
+      border: 1px solid var(--border);
+      border-radius: 4px;
     }
 
     .timeline-grid {
@@ -235,91 +375,147 @@
     .timeline-row,
     .list-row {
       display: grid;
-      grid-template-columns: var(--left-width) var(--timeline-width);
+
+      grid-template-columns:
+        var(--left-width)
+        var(--timeline-width);
     }
+
+    /* ======================================================
+       LEFT COLUMN
+    ====================================================== */
 
     .timeline-left {
       position: sticky;
       left: 0;
-      z-index: 6;
+
+      z-index: 20;
+
       background: white;
+
       border-right: 1px solid var(--border);
     }
 
     .header-left {
       height: 72px;
+
       display: flex;
       align-items: end;
-      padding: 14px;
-      font-weight: 700;
+
+      padding: 12px;
+
       border-bottom: 1px solid var(--border);
+
+      font-weight: 600;
     }
 
+    /* ======================================================
+       DATE HEADER
+    ====================================================== */
+
     .header-track {
-      height: 72px;
       position: relative;
+
+      height: 72px;
+
       background: white;
+
       border-bottom: 1px solid var(--border);
     }
 
     .months {
-      height: 32px;
       position: relative;
+
+      height: 32px;
+
       border-bottom: 1px solid var(--border);
     }
 
     .month-label {
       position: absolute;
+
       top: 0;
+
       height: 32px;
+
       padding: 7px 8px;
+
       border-right: 1px solid var(--border);
+
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .days {
-      height: 40px;
       position: relative;
+
+      height: 40px;
     }
 
     .day {
       position: absolute;
+
       top: 0;
+
       width: var(--day-width);
       height: 40px;
-      text-align: center;
+
       padding-top: 4px;
+
       border-right: 1px solid #EEF0F2;
-      color: var(--muted);
+
+      text-align: center;
+
       font-size: 10px;
+
+      color: var(--muted);
     }
 
     .day strong {
       display: block;
+
       margin-top: 2px;
+
       color: var(--text);
+
       font-size: 12px;
+      font-weight: 600;
     }
+
+    /* ======================================================
+       LIST GROUPS
+    ====================================================== */
 
     .list-title {
       position: sticky;
       left: 0;
-      z-index: 7;
-      padding: 9px 14px;
+
+      z-index: 25;
+
+      padding: 8px 12px;
+
       background: #F1F2F4;
+
       border-right: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      font-size: 12px;
-      font-weight: 800;
+
+      font-size: 11px;
+      font-weight: 700;
+
       text-transform: uppercase;
+
       letter-spacing: 0.04em;
     }
 
     .list-track {
       background: #F1F2F4;
+
       border-bottom: 1px solid var(--border);
     }
+
+    /* ======================================================
+       CARD DETAILS
+    ====================================================== */
 
     .timeline-row {
       min-height: var(--row-height);
@@ -328,13 +524,23 @@
     .card-info {
       position: sticky;
       left: 0;
-      z-index: 5;
-      background: white;
+
+      z-index: 15;
+
       min-height: var(--row-height);
-      padding: 9px 12px;
+
+      padding: 8px 10px;
+
+      background: white;
+
       border-right: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
+
       cursor: pointer;
+    }
+
+    .card-info:hover {
+      background: var(--hover);
     }
 
     .card-info:hover .card-title {
@@ -342,35 +548,72 @@
     }
 
     .card-title {
-      font-size: 13px;
-      font-weight: 700;
       margin-bottom: 5px;
+
+      font-size: 12px;
+      font-weight: 600;
     }
 
     .card-meta {
       display: flex;
+      align-items: center;
       flex-wrap: wrap;
-      gap: 5px;
-    }
 
-    .label-chip {
-      display: inline-block;
-      padding: 2px 7px;
-      border-radius: 10px;
-      background: #ECEEF1;
-      font-size: 10px;
-      font-weight: 700;
+      gap: 4px;
     }
 
     .responsible {
       margin-top: 5px;
+
       font-size: 11px;
+
       color: var(--muted);
     }
 
+    /* ======================================================
+       TRELLO LABELS
+    ====================================================== */
+
+    .label-chip,
+    .activity-label {
+      display: inline-flex;
+      align-items: center;
+
+      border-radius: 3px;
+
+      white-space: nowrap;
+
+      font-weight: 500;
+    }
+
+    .label-chip {
+      min-height: 20px;
+
+      padding: 1px 6px;
+
+      font-size: 10px;
+    }
+
+    .activity-label {
+      max-width: 110px;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      padding: 1px 5px;
+
+      font-size: 9px;
+    }
+
+    /* ======================================================
+       TIMELINE TRACK
+    ====================================================== */
+
     .track {
       position: relative;
+
       height: var(--row-height);
+
       border-bottom: 1px solid var(--border);
 
       background:
@@ -383,107 +626,176 @@
         );
     }
 
+    /* ======================================================
+       CURRENT SCHEDULE BAR
+    ====================================================== */
+
     .activity {
       position: absolute;
-      top: 11px;
-      height: 43px;
-      min-width: 10px;
+
+      top: 10px;
+
+      height: 45px;
+
+      min-width: 12px;
+
       overflow: hidden;
-      border-radius: 6px;
-      background: var(--moss);
-      border: 1px solid #8DA78D;
+
       padding: 5px 7px;
+
+      background: var(--moss);
+
+      border: 1px solid #8DA78D;
+      border-radius: 5px;
+
       cursor: pointer;
+
       z-index: 2;
+    }
+
+    .activity:hover {
+      outline: 2px solid rgba(67, 78, 70, 0.18);
     }
 
     .activity.due-soon {
       background: var(--due-soon);
-      border-color: #D6A400;
+
+      border-color: var(--due-soon-border);
     }
 
     .activity.overdue {
       background: var(--overdue);
-      border-color: #A63A2B;
+
+      border-color: var(--overdue-border);
     }
 
     .activity.complete {
-      opacity: 0.65;
+      opacity: 0.6;
     }
 
     .activity-title {
-      white-space: nowrap;
       overflow: hidden;
+
+      white-space: nowrap;
       text-overflow: ellipsis;
+
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .activity-bottom {
-      margin-top: 4px;
       display: flex;
       align-items: center;
+
       gap: 4px;
-      white-space: nowrap;
+
+      margin-top: 4px;
+
       overflow: hidden;
+
+      white-space: nowrap;
     }
 
-    .activity-label {
+    .status-badge {
+      display: inline-block;
+
       padding: 1px 5px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.75);
+
+      border-radius: 3px;
+
+      background: rgba(255, 255, 255, 0.86);
+
       font-size: 9px;
       font-weight: 700;
     }
 
-    .status-badge {
-      padding: 1px 5px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.85);
-      font-size: 9px;
-      font-weight: 800;
-    }
+    /* ======================================================
+       BASELINE
+    ====================================================== */
 
     .baseline {
       position: absolute;
-      top: 53px;
+
+      top: 57px;
+
       height: 7px;
+
       border-radius: 5px;
+
       background: var(--governor);
+
       z-index: 3;
     }
 
+    /* ======================================================
+       TODAY LINE
+    ====================================================== */
+
     .today-line {
       position: absolute;
+
       top: 0;
       bottom: 0;
+
       width: 2px;
+
       background: var(--brass);
-      z-index: 4;
+
+      z-index: 5;
+
       pointer-events: none;
     }
 
     .today-label {
       position: absolute;
+
       top: 1px;
+
       transform: translateX(-50%);
+
+      padding: 2px 5px;
+
+      border-radius: 3px;
+
       background: var(--brass);
       color: white;
-      border-radius: 4px;
-      padding: 2px 5px;
+
       font-size: 9px;
-      font-weight: 800;
+      font-weight: 700;
+
       z-index: 10;
     }
 
+    /* ======================================================
+       MESSAGES
+    ====================================================== */
+
     .message {
       padding: 30px;
-      color: var(--muted);
+
       text-align: center;
+
+      color: var(--muted);
     }
 
     .error {
-      color: #A63A2B;
+      color: var(--overdue-text);
+    }
+
+    .authorize-button {
+      margin-top: 12px;
+
+      padding: 8px 14px;
+
+      border: 0;
+      border-radius: 4px;
+
+      background: var(--governor);
+      color: var(--ivory);
+
+      cursor: pointer;
+
+      font-weight: 600;
     }
   </style>
 </head>
@@ -494,55 +806,70 @@
 
   <div class="toolbar">
 
-    <div class="filter search">
-      <label for="searchFilter">Search activities</label>
+    <div class="filter-search">
+
+      <span class="filter-label">
+        Search activities
+      </span>
+
       <input
         id="searchFilter"
-        type="text"
+        type="search"
         placeholder="Search card name..."
       >
+
     </div>
 
-    <div class="filter">
-  <label>List</label>
+    <div class="filter-holder">
 
-  <details class="multi-filter" id="listFilter">
-    <summary>All lists</summary>
+      <span class="filter-label">
+        List
+      </span>
 
-    <div
-      class="multi-filter-options"
-      id="listFilterOptions">
-    </div>
-  </details>
-</div>
+      <div id="listFilter"></div>
 
-    <div class="filter">
-      <label for="responsibleFilter">Responsible</label>
-      <select id="responsibleFilter">
-        <option value="">Everyone</option>
-      </select>
     </div>
 
-    <div class="filter">
-      <label for="labelFilter">Label</label>
-      <select id="labelFilter">
-        <option value="">All labels</option>
-      </select>
+    <div class="filter-holder">
+
+      <span class="filter-label">
+        Responsible
+      </span>
+
+      <div id="responsibleFilter"></div>
+
     </div>
 
-    <div class="filter">
-      <label for="statusFilter">Due status</label>
-      <select id="statusFilter">
-        <option value="">All statuses</option>
-        <option value="normal">On track</option>
-        <option value="due-soon">Due soon</option>
-        <option value="overdue">Overdue</option>
-        <option value="baseline-exceeded">Baseline exceeded</option>
-        <option value="complete">Complete</option>
-      </select>
+    <div class="filter-holder">
+
+      <span class="filter-label">
+        Label
+      </span>
+
+      <div id="labelFilter"></div>
+
     </div>
+
+    <div class="filter-holder">
+
+      <span class="filter-label">
+        Due status
+      </span>
+
+      <div id="statusFilter"></div>
+
+    </div>
+
+    <button
+      id="clearFilters"
+      type="button"
+      class="clear-button"
+    >
+      Clear Filters
+    </button>
 
     <div class="legend">
+
       <div class="legend-item">
         <span class="legend-current"></span>
         Current
@@ -562,20 +889,29 @@
         <span class="legend-overdue"></span>
         Overdue
       </div>
+
     </div>
 
   </div>
 
-  <div id="summary" class="summary">
+  <div
+    id="summary"
+    class="summary"
+  >
     Loading Trello data...
   </div>
 
   <div class="timeline-shell">
-    <div id="timeline" class="timeline-grid">
+
+    <div
+      id="timeline"
+      class="timeline-grid"
+    >
       <div class="message">
         Loading project timeline...
       </div>
     </div>
+
   </div>
 
 </div>
@@ -583,147 +919,277 @@
 <script src="https://p.trellocdn.com/power-up.min.js"></script>
 
 <script>
-  /*
-    IMPORTANT:
-    Paste the SAME Trello API Key you added to index.html.
-    Do not paste your API Secret here.
-  */
+  const TRELLO_API_KEY =
+    "b82c41f13fc90820cc581fe1c8ecb160";
 
-  const TRELLO_API_KEY = "b82c41f13fc90820cc581fe1c8ecb160";
-
-  const t = window.TrelloPowerUp.iframe({
-    appKey: TRELLO_API_KEY,
-    appName: "Project Timeline",
-    appAuthor: "Steph Cluff Marketing Agency"
-  });
+  const t =
+    window.TrelloPowerUp.iframe({
+      appKey: TRELLO_API_KEY,
+      appName: "Project Timeline",
+      appAuthor: "Steph Cluff Marketing Agency"
+    });
 
   const CONFIG = {
     baselineStartField: "Baseline Start",
     baselineFinishField: "Baseline Finish",
     responsibleField: "Responsible",
+
     dueSoonWorkingDays: 5,
+
     dayWidth: 42,
+
     timelinePaddingWorkingDays: 5
   };
 
+
+  /* ======================================================
+     DATA
+  ====================================================== */
+
   let boardData = null;
+
   let listData = [];
+
   let cardData = [];
 
   let customFieldsById = {};
+
   let processedCards = [];
 
   let workingDays = [];
+
   let startDate = null;
+
   let endDate = null;
 
+
+  /* ======================================================
+     MULTI FILTER STATE
+  ====================================================== */
+
+  const multiSelections = {
+    list: new Set(),
+    responsible: new Set(),
+    label: new Set(),
+    status: new Set()
+  };
+
+  const multiFilterMeta = {};
+
+
+  /* ======================================================
+     DATES
+  ====================================================== */
+
   function parseDateOnly(value) {
-    if (!value) return null;
+
+    if (!value) {
+      return null;
+    }
 
     if (value instanceof Date) {
+
       return new Date(
         value.getFullYear(),
         value.getMonth(),
         value.getDate()
       );
+
     }
 
-    const parts = String(value).substring(0, 10).split("-");
+    const parts =
+      String(value)
+        .substring(0, 10)
+        .split("-");
 
-    if (parts.length !== 3) return null;
+    if (parts.length !== 3) {
+      return null;
+    }
 
     return new Date(
       Number(parts[0]),
       Number(parts[1]) - 1,
       Number(parts[2])
     );
+
   }
 
+
   function cloneDate(date) {
+
     return new Date(
       date.getFullYear(),
       date.getMonth(),
       date.getDate()
     );
+
   }
 
-  function addCalendarDays(date, amount) {
-    const result = cloneDate(date);
-    result.setDate(result.getDate() + amount);
+
+  function addCalendarDays(
+    date,
+    amount
+  ) {
+
+    const result =
+      cloneDate(date);
+
+    result.setDate(
+      result.getDate() + amount
+    );
+
     return result;
+
   }
+
 
   function isWeekend(date) {
-    return date.getDay() === 0 || date.getDay() === 6;
+
+    return (
+      date.getDay() === 0 ||
+      date.getDay() === 6
+    );
+
   }
+
 
   function nextWorkingDay(date) {
-    let result = cloneDate(date);
+
+    let result =
+      cloneDate(date);
 
     while (isWeekend(result)) {
-      result = addCalendarDays(result, 1);
+
+      result =
+        addCalendarDays(
+          result,
+          1
+        );
+
     }
 
     return result;
+
   }
+
 
   function previousWorkingDay(date) {
-    let result = cloneDate(date);
+
+    let result =
+      cloneDate(date);
 
     while (isWeekend(result)) {
-      result = addCalendarDays(result, -1);
+
+      result =
+        addCalendarDays(
+          result,
+          -1
+        );
+
     }
 
     return result;
+
   }
 
-  function addWorkingDays(date, amount) {
-    let result = cloneDate(date);
-    const direction = amount >= 0 ? 1 : -1;
-    let remaining = Math.abs(amount);
+
+  function addWorkingDays(
+    date,
+    amount
+  ) {
+
+    let result =
+      cloneDate(date);
+
+    const direction =
+      amount >= 0
+        ? 1
+        : -1;
+
+    let remaining =
+      Math.abs(amount);
 
     while (remaining > 0) {
-      result = addCalendarDays(result, direction);
+
+      result =
+        addCalendarDays(
+          result,
+          direction
+        );
 
       if (!isWeekend(result)) {
         remaining--;
       }
+
     }
 
     return result;
+
   }
 
-  function workingDaysBetween(start, end) {
-    if (!start || !end) return null;
 
-    if (end < start) {
-      return -workingDaysBetween(end, start);
+  function workingDaysBetween(
+    start,
+    end
+  ) {
+
+    if (!start || !end) {
+      return null;
     }
 
-    let cursor = cloneDate(start);
+    if (end < start) {
+
+      return -workingDaysBetween(
+        end,
+        start
+      );
+
+    }
+
+    let cursor =
+      cloneDate(start);
+
     let count = 0;
 
     while (cursor < end) {
-      cursor = addCalendarDays(cursor, 1);
+
+      cursor =
+        addCalendarDays(
+          cursor,
+          1
+        );
 
       if (!isWeekend(cursor)) {
         count++;
       }
+
     }
 
     return count;
+
   }
+
 
   function dateKey(date) {
+
     return [
       date.getFullYear(),
-      String(date.getMonth() + 1).padStart(2, "0"),
-      String(date.getDate()).padStart(2, "0")
+      String(
+        date.getMonth() + 1
+      ).padStart(2, "0"),
+      String(
+        date.getDate()
+      ).padStart(2, "0")
     ].join("-");
+
   }
 
+
   function formatShortDate(date) {
-    if (!date) return "";
+
+    if (!date) {
+      return "";
+    }
 
     return date.toLocaleDateString(
       "en-AU",
@@ -732,229 +1198,663 @@
         month: "short"
       }
     );
+
   }
 
+
+  /* ======================================================
+     HELPERS
+  ====================================================== */
+
   function escapeHTML(value) {
+
     return String(value || "")
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
+
   }
 
-  function buildCustomFieldMap() {
-    customFieldsById = {};
 
-    (boardData.customFields || []).forEach(field => {
-      customFieldsById[field.id] = field;
-    });
-  }
+  function uniqueSorted(values) {
 
-  function resolveCustomFieldValue(card, fieldName) {
-    const definition = Object.values(customFieldsById).find(
-      field =>
-        field.name.trim().toLowerCase() ===
-        fieldName.trim().toLowerCase()
-    );
+    return Array
+      .from(
+        new Set(
+          values.filter(Boolean)
+        )
+      )
+      .sort(
+        function(a, b) {
 
-    if (!definition) return "";
+          return String(a)
+            .localeCompare(
+              String(b),
+              undefined,
+              {
+                numeric: true,
+                sensitivity: "base"
+              }
+            );
 
-    const item = (card.customFieldItems || []).find(
-      customItem =>
-        customItem.idCustomField === definition.id
-    );
-
-    if (!item) return "";
-
-    if (definition.type === "list" && item.idValue) {
-      const option = (definition.options || []).find(
-        option => option.id === item.idValue
+        }
       );
 
-      return option?.value?.text || "";
+  }
+
+
+  function hasSelections(key) {
+
+    return Boolean(
+      multiSelections[key] &&
+      multiSelections[key].size
+    );
+
+  }
+
+
+  /* ======================================================
+     TRELLO LABEL COLOURS
+  ====================================================== */
+
+  function getLabelColours(color) {
+
+    const palette = {
+
+      green: [
+        "#4BCE97",
+        "#164B35"
+      ],
+
+      yellow: [
+        "#F5CD47",
+        "#533F04"
+      ],
+
+      orange: [
+        "#FEA362",
+        "#702E00"
+      ],
+
+      red: [
+        "#F87168",
+        "#5D1F1A"
+      ],
+
+      purple: [
+        "#9F8FEF",
+        "#352C63"
+      ],
+
+      blue: [
+        "#579DFF",
+        "#09326C"
+      ],
+
+      sky: [
+        "#6CC3E0",
+        "#164555"
+      ],
+
+      lime: [
+        "#94C748",
+        "#37471F"
+      ],
+
+      pink: [
+        "#E774BB",
+        "#50253F"
+      ],
+
+      black: [
+        "#8590A2",
+        "#172B4D"
+      ]
+
+    };
+
+    const key =
+      String(color || "")
+        .replace(
+          /_(light|dark)$/,
+          ""
+        );
+
+    return (
+      palette[key] ||
+      [
+        "#DFE1E6",
+        "#172B4D"
+      ]
+    );
+
+  }
+
+
+  function labelStyle(color) {
+
+    const colours =
+      getLabelColours(color);
+
+    return (
+      "background-color:" +
+      colours[0] +
+      ";" +
+      "color:" +
+      colours[1] +
+      ";"
+    );
+
+  }
+
+
+  /* ======================================================
+     CUSTOM FIELDS
+  ====================================================== */
+
+  function buildCustomFieldMap() {
+
+    customFieldsById = {};
+
+    (
+      boardData.customFields ||
+      []
+    )
+      .forEach(
+        function(field) {
+
+          customFieldsById[field.id] =
+            field;
+
+        }
+      );
+
+  }
+
+
+  function resolveCustomFieldValue(
+    card,
+    fieldName
+  ) {
+
+    const definition =
+      Object
+        .values(
+          customFieldsById
+        )
+        .find(
+          function(field) {
+
+            return (
+              field.name
+                .trim()
+                .toLowerCase() ===
+              fieldName
+                .trim()
+                .toLowerCase()
+            );
+
+          }
+        );
+
+    if (!definition) {
+      return "";
     }
 
-    if (item.value?.date) {
+    const item =
+      (
+        card.customFieldItems ||
+        []
+      )
+        .find(
+          function(customItem) {
+
+            return (
+              customItem.idCustomField ===
+              definition.id
+            );
+
+          }
+        );
+
+    if (!item) {
+      return "";
+    }
+
+    if (
+      definition.type === "list" &&
+      item.idValue
+    ) {
+
+      const option =
+        (
+          definition.options ||
+          []
+        )
+          .find(
+            function(option) {
+
+              return (
+                option.id ===
+                item.idValue
+              );
+
+            }
+          );
+
+      return (
+        option &&
+        option.value
+      )
+        ? option.value.text || ""
+        : "";
+
+    }
+
+    if (
+      item.value &&
+      item.value.date
+    ) {
+
       return item.value.date;
+
     }
 
-    if (typeof item.value?.text !== "undefined") {
+    if (
+      item.value &&
+      typeof item.value.text !==
+      "undefined"
+    ) {
+
       return item.value.text;
+
     }
 
-    if (typeof item.value?.number !== "undefined") {
+    if (
+      item.value &&
+      typeof item.value.number !==
+      "undefined"
+    ) {
+
       return item.value.number;
+
     }
 
-    if (typeof item.value?.checked !== "undefined") {
-      return item.value.checked === "true" ? "Yes" : "No";
+    if (
+      item.value &&
+      typeof item.value.checked !==
+      "undefined"
+    ) {
+
+      return (
+        item.value.checked ===
+        "true"
+      )
+        ? "Yes"
+        : "No";
+
     }
 
     return "";
+
   }
+
+
+  /* ======================================================
+     PROCESS CARDS
+  ====================================================== */
 
   function processCards() {
-    const today = parseDateOnly(new Date());
 
-    processedCards = cardData
-      .map(card => {
-        const currentStart = parseDateOnly(card.start);
-        const currentDue = parseDateOnly(card.due);
+    const today =
+      parseDateOnly(
+        new Date()
+      );
 
-        const baselineStart = parseDateOnly(
-          resolveCustomFieldValue(
-            card,
-            CONFIG.baselineStartField
-          )
-        );
+    processedCards =
+      cardData
+        .map(
+          function(card) {
 
-        const baselineFinish = parseDateOnly(
-          resolveCustomFieldValue(
-            card,
-            CONFIG.baselineFinishField
-          )
-        );
+            const currentStart =
+              parseDateOnly(
+                card.start
+              );
 
-        const responsible = resolveCustomFieldValue(
-          card,
-          CONFIG.responsibleField
-        );
+            const currentDue =
+              parseDateOnly(
+                card.due
+              );
 
-        let status = "normal";
+            const baselineStart =
+              parseDateOnly(
+                resolveCustomFieldValue(
+                  card,
+                  CONFIG.baselineStartField
+                )
+              );
 
-        if (card.dueComplete) {
-          status = "complete";
-        } else if (currentDue && currentDue < today) {
-          status = "overdue";
-        } else if (currentDue) {
-          const remaining = workingDaysBetween(
-            today,
-            currentDue
-          );
+            const baselineFinish =
+              parseDateOnly(
+                resolveCustomFieldValue(
+                  card,
+                  CONFIG.baselineFinishField
+                )
+              );
 
-          if (
-            remaining >= 0 &&
-            remaining <= CONFIG.dueSoonWorkingDays
-          ) {
-            status = "due-soon";
-          }
-        }
+            const responsible =
+              resolveCustomFieldValue(
+                card,
+                CONFIG.responsibleField
+              );
 
-        const baselineExceeded =
-          currentDue &&
-          baselineFinish &&
-          currentDue > baselineFinish;
+            let status =
+              "normal";
 
-        const variance =
-          currentDue && baselineFinish
-            ? workingDaysBetween(
-                baselineFinish,
-                currentDue
+            if (card.dueComplete) {
+
+              status =
+                "complete";
+
+            } else if (
+              currentDue &&
+              currentDue < today
+            ) {
+
+              status =
+                "overdue";
+
+            } else if (currentDue) {
+
+              const remaining =
+                workingDaysBetween(
+                  today,
+                  currentDue
+                );
+
+              if (
+                remaining >= 0 &&
+                remaining <=
+                  CONFIG.dueSoonWorkingDays
+              ) {
+
+                status =
+                  "due-soon";
+
+              }
+
+            }
+
+            const baselineExceeded =
+              Boolean(
+                currentDue &&
+                baselineFinish &&
+                currentDue >
+                  baselineFinish
+              );
+
+            const variance =
+              (
+                currentDue &&
+                baselineFinish
               )
-            : null;
+                ? workingDaysBetween(
+                    baselineFinish,
+                    currentDue
+                  )
+                : null;
 
-        const list = listData.find(
-          item => item.id === card.idList
+            const list =
+              listData.find(
+                function(item) {
+
+                  return (
+                    item.id ===
+                    card.idList
+                  );
+
+                }
+              );
+
+            return {
+              ...card,
+
+              listName:
+                list
+                  ? list.name
+                  : "Other",
+
+              currentStart,
+
+              currentDue,
+
+              baselineStart,
+
+              baselineFinish,
+
+              responsible,
+
+              status,
+
+              baselineExceeded,
+
+              variance
+            };
+
+          }
+        )
+        .filter(
+          function(card) {
+
+            return Boolean(
+              (
+                card.currentStart &&
+                card.currentDue
+              )
+              ||
+              (
+                card.baselineStart &&
+                card.baselineFinish
+              )
+            );
+
+          }
         );
 
-        return {
-          ...card,
-          currentStart,
-          currentDue,
-          baselineStart,
-          baselineFinish,
-          responsible,
-          status,
-          baselineExceeded,
-          variance,
-          listName: list?.name || "Other"
-        };
-      })
-      .filter(card => {
-        return (
-          (card.currentStart && card.currentDue) ||
-          (card.baselineStart && card.baselineFinish)
-        );
-      });
   }
 
+
+  /* ======================================================
+     TIMELINE RANGE
+  ====================================================== */
+
   function calculateRange(cards) {
+
     const dates = [];
 
-    cards.forEach(card => {
-      [
-        card.currentStart,
-        card.currentDue,
-        card.baselineStart,
-        card.baselineFinish
-      ].forEach(date => {
-        if (date) dates.push(date);
-      });
-    });
+    cards.forEach(
+      function(card) {
+
+        [
+          card.currentStart,
+          card.currentDue,
+          card.baselineStart,
+          card.baselineFinish
+        ]
+          .forEach(
+            function(date) {
+
+              if (date) {
+                dates.push(date);
+              }
+
+            }
+          );
+
+      }
+    );
 
     if (!dates.length) {
+
       startDate = null;
       endDate = null;
+
+      return;
+
+    }
+
+    dates.sort(
+      function(a, b) {
+        return a - b;
+      }
+    );
+
+    startDate =
+      addWorkingDays(
+        dates[0],
+        -CONFIG.timelinePaddingWorkingDays
+      );
+
+    endDate =
+      addWorkingDays(
+        dates[
+          dates.length - 1
+        ],
+        CONFIG.timelinePaddingWorkingDays
+      );
+
+    startDate =
+      previousWorkingDay(
+        startDate
+      );
+
+    endDate =
+      nextWorkingDay(
+        endDate
+      );
+
+  }
+
+
+  function buildWorkingDays() {
+
+    workingDays = [];
+
+    if (
+      !startDate ||
+      !endDate
+    ) {
       return;
     }
 
-    dates.sort((a, b) => a - b);
+    let cursor =
+      cloneDate(
+        startDate
+      );
 
-    startDate = addWorkingDays(
-      dates[0],
-      -CONFIG.timelinePaddingWorkingDays
-    );
+    while (
+      cursor <= endDate
+    ) {
 
-    endDate = addWorkingDays(
-      dates[dates.length - 1],
-      CONFIG.timelinePaddingWorkingDays
-    );
+      if (
+        !isWeekend(cursor)
+      ) {
 
-    startDate = previousWorkingDay(startDate);
-    endDate = nextWorkingDay(endDate);
-  }
+        workingDays.push(
+          cloneDate(cursor)
+        );
 
-  function buildWorkingDays() {
-    workingDays = [];
-
-    if (!startDate || !endDate) return;
-
-    let cursor = cloneDate(startDate);
-
-    while (cursor <= endDate) {
-      if (!isWeekend(cursor)) {
-        workingDays.push(cloneDate(cursor));
       }
 
-      cursor = addCalendarDays(cursor, 1);
+      cursor =
+        addCalendarDays(
+          cursor,
+          1
+        );
+
     }
+
   }
 
-  function getDateIndex(date, type) {
-    if (!date || !workingDays.length) return null;
+
+  /* ======================================================
+     POSITIONING
+  ====================================================== */
+
+  function getDateIndex(
+    date,
+    type
+  ) {
+
+    if (
+      !date ||
+      !workingDays.length
+    ) {
+      return null;
+    }
 
     const adjusted =
       type === "end"
         ? previousWorkingDay(date)
         : nextWorkingDay(date);
 
-    if (adjusted < workingDays[0]) return 0;
-
-    if (adjusted > workingDays[workingDays.length - 1]) {
-      return workingDays.length - 1;
+    if (
+      adjusted <
+      workingDays[0]
+    ) {
+      return 0;
     }
 
-    return workingDays.findIndex(
-      item => dateKey(item) === dateKey(adjusted)
-    );
+    if (
+      adjusted >
+      workingDays[
+        workingDays.length - 1
+      ]
+    ) {
+
+      return (
+        workingDays.length - 1
+      );
+
+    }
+
+    return workingDays
+      .findIndex(
+        function(item) {
+
+          return (
+            dateKey(item) ===
+            dateKey(adjusted)
+          );
+
+        }
+      );
+
   }
 
-  function getBarGeometry(start, end) {
-    if (!start || !end) return null;
 
-    let startIndex = getDateIndex(start, "start");
-    let endIndex = getDateIndex(end, "end");
+  function getBarGeometry(
+    start,
+    end
+  ) {
+
+    if (!start || !end) {
+      return null;
+    }
+
+    let startIndex =
+      getDateIndex(
+        start,
+        "start"
+      );
+
+    let endIndex =
+      getDateIndex(
+        end,
+        "end"
+      );
 
     if (
       startIndex === null ||
@@ -965,241 +1865,1053 @@
       return null;
     }
 
-    if (endIndex < startIndex) {
-      [startIndex, endIndex] = [endIndex, startIndex];
+    if (
+      endIndex <
+      startIndex
+    ) {
+
+      const temp =
+        startIndex;
+
+      startIndex =
+        endIndex;
+
+      endIndex =
+        temp;
+
     }
 
     return {
-      left: startIndex * CONFIG.dayWidth,
+      left:
+        startIndex *
+        CONFIG.dayWidth,
+
       width:
-        (endIndex - startIndex + 1) *
+        (
+          endIndex -
+          startIndex +
+          1
+        ) *
         CONFIG.dayWidth
     };
+
   }
 
-  function populateFilters() {
-    const listFilter = document.getElementById("listFilter");
-    const responsibleFilter =
-      document.getElementById("responsibleFilter");
-    const labelFilter =
-      document.getElementById("labelFilter");
 
-        const listFilterOptions =
-      document.getElementById("listFilterOptions");
+  /* ======================================================
+     MULTI FILTER COMPONENT
+  ====================================================== */
 
-    listFilterOptions.innerHTML = "";
+  function buildMultiFilter(config) {
 
-    listData.forEach(list => {
-      const row = document.createElement("label");
-      row.className = "multi-option";
-
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.value = list.id;
-      checkbox.dataset.filter = "list";
-
-      const text = document.createElement("span");
-      text.className = "multi-option-label";
-      text.textContent = list.name;
-
-      row.appendChild(checkbox);
-      row.appendChild(text);
-
-      listFilterOptions.appendChild(row);
-    });
-
-    [
-      ...new Set(
-        processedCards
-          .map(card => card.responsible)
-          .filter(Boolean)
-      )
-    ]
-      .sort()
-      .forEach(value => {
-        const option = document.createElement("option");
-        option.value = value;
-        option.textContent = value;
-        responsibleFilter.appendChild(option);
-      });
-
-    const labels = new Map();
-
-    processedCards.forEach(card => {
-      (card.labels || []).forEach(label => {
-        labels.set(
-          label.id,
-          label.name || label.color || "Unnamed label"
-        );
-      });
-    });
-
-    [...labels.entries()]
-      .sort((a, b) => a[1].localeCompare(b[1]))
-      .forEach(([id, name]) => {
-        const option = document.createElement("option");
-        option.value = id;
-        option.textContent = name;
-        labelFilter.appendChild(option);
-      });
-  }
-
-  function getFilteredCards() {
-    const search = document
-      .getElementById("searchFilter")
-      .value
-      .trim()
-      .toLowerCase();
-
-    const selectedLists = [
-  ...document.querySelectorAll(
-    '#listFilterOptions input[type="checkbox"]:checked'
-  )
-].map(
-  checkbox => checkbox.value
-);
-
-    const responsible =
-      document.getElementById("responsibleFilter").value;
-
-    const label =
-      document.getElementById("labelFilter").value;
-
-    const status =
-      document.getElementById("statusFilter").value;
-
-    return processedCards.filter(card => {
-      if (
-        search &&
-        !card.name.toLowerCase().includes(search)
-      ) {
-        return false;
-      }
-
-      if (
-  selectedLists.length &&
-  !selectedLists.includes(card.idList)
-) {
-  return false;
-}
-
-      if (
-        responsible &&
-        card.responsible !== responsible
-      ) {
-        return false;
-      }
-
-      if (
-        label &&
-        !(card.labels || []).some(
-          item => item.id === label
-        )
-      ) {
-        return false;
-      }
-
-      if (status === "baseline-exceeded") {
-        if (!card.baselineExceeded) return false;
-      } else if (status && card.status !== status) {
-        return false;
-      }
-
-      return true;
-    });
-  }
-
-  function renderMonthHeader() {
-    const groups = [];
-
-    workingDays.forEach((date, index) => {
-      const key =
-        date.getFullYear() + "-" + date.getMonth();
-
-      let group = groups.find(
-        item => item.key === key
+    const container =
+      document.getElementById(
+        config.containerId
       );
 
-      if (!group) {
-        group = {
-          key,
-          label: date.toLocaleDateString(
-            "en-AU",
-            {
-              month: "long",
-              year: "numeric"
+    if (!container) {
+      return;
+    }
+
+    container.innerHTML = "";
+
+    const key =
+      config.key;
+
+    multiSelections[key] =
+      new Set();
+
+    multiFilterMeta[key] = {
+      allLabel:
+        config.allLabel,
+
+      singularLabel:
+        config.singularLabel,
+
+      pluralLabel:
+        config.pluralLabel,
+
+      values:
+        config.values
+    };
+
+    const wrapper =
+      document.createElement(
+        "div"
+      );
+
+    wrapper.className =
+      "multi-filter";
+
+    wrapper.dataset.key =
+      key;
+
+    const button =
+      document.createElement(
+        "button"
+      );
+
+    button.type =
+      "button";
+
+    button.className =
+      "multi-filter-button";
+
+    const buttonText =
+      document.createElement(
+        "span"
+      );
+
+    buttonText.className =
+      "multi-filter-button-text";
+
+    buttonText.textContent =
+      config.allLabel;
+
+    const arrow =
+      document.createElement(
+        "span"
+      );
+
+    arrow.className =
+      "multi-filter-arrow";
+
+    arrow.textContent =
+      "▼";
+
+    button.appendChild(
+      buttonText
+    );
+
+    button.appendChild(
+      arrow
+    );
+
+    const menu =
+      document.createElement(
+        "div"
+      );
+
+    menu.className =
+      "multi-filter-menu";
+
+    const actions =
+      document.createElement(
+        "div"
+      );
+
+    actions.className =
+      "multi-filter-actions";
+
+    const selectAllButton =
+      document.createElement(
+        "button"
+      );
+
+    selectAllButton.type =
+      "button";
+
+    selectAllButton.textContent =
+      "Select all";
+
+    const clearButton =
+      document.createElement(
+        "button"
+      );
+
+    clearButton.type =
+      "button";
+
+    clearButton.textContent =
+      "Clear";
+
+    actions.appendChild(
+      selectAllButton
+    );
+
+    actions.appendChild(
+      clearButton
+    );
+
+    const options =
+      document.createElement(
+        "div"
+      );
+
+    options.className =
+      "multi-filter-options";
+
+    config.values.forEach(
+      function(optionData) {
+
+        const value =
+          typeof optionData ===
+          "object"
+            ? optionData.value
+            : optionData;
+
+        const displayText =
+          typeof optionData ===
+          "object"
+            ? optionData.label
+            : optionData;
+
+        const row =
+          document.createElement(
+            "label"
+          );
+
+        row.className =
+          "multi-filter-option";
+
+        const checkbox =
+          document.createElement(
+            "input"
+          );
+
+        checkbox.type =
+          "checkbox";
+
+        checkbox.value =
+          value;
+
+        checkbox.dataset.filterKey =
+          key;
+
+        if (
+          typeof optionData ===
+            "object" &&
+          optionData.color
+        ) {
+
+          const swatch =
+            document.createElement(
+              "span"
+            );
+
+          swatch.className =
+            "filter-label-swatch";
+
+          const colours =
+            getLabelColours(
+              optionData.color
+            );
+
+          swatch.style
+            .backgroundColor =
+              colours[0];
+
+          row.appendChild(
+            checkbox
+          );
+
+          row.appendChild(
+            swatch
+          );
+
+        } else {
+
+          row.appendChild(
+            checkbox
+          );
+
+        }
+
+        const text =
+          document.createElement(
+            "span"
+          );
+
+        text.className =
+          "multi-filter-option-text";
+
+        text.textContent =
+          displayText;
+
+        row.appendChild(
+          text
+        );
+
+        options.appendChild(
+          row
+        );
+
+        checkbox
+          .addEventListener(
+            "change",
+            function() {
+
+              if (
+                checkbox.checked
+              ) {
+
+                multiSelections[key]
+                  .add(value);
+
+              } else {
+
+                multiSelections[key]
+                  .delete(value);
+
+              }
+
+              refreshMultiFilterButton(
+                key
+              );
+
+              renderTimeline();
+
             }
-          ),
-          start: index,
-          count: 0
-        };
+          );
 
-        groups.push(group);
       }
+    );
 
-      group.count++;
+    menu.appendChild(
+      actions
+    );
+
+    menu.appendChild(
+      options
+    );
+
+    wrapper.appendChild(
+      button
+    );
+
+    wrapper.appendChild(
+      menu
+    );
+
+    container.appendChild(
+      wrapper
+    );
+
+    button.addEventListener(
+      "click",
+      function(event) {
+
+        event.stopPropagation();
+
+        const shouldOpen =
+          !wrapper.classList
+            .contains(
+              "open"
+            );
+
+        closeAllMultiFilters();
+
+        if (shouldOpen) {
+
+          wrapper.classList
+            .add(
+              "open"
+            );
+
+        }
+
+      }
+    );
+
+    menu.addEventListener(
+      "click",
+      function(event) {
+
+        event.stopPropagation();
+
+      }
+    );
+
+    selectAllButton
+      .addEventListener(
+        "click",
+        function() {
+
+          multiSelections[key] =
+            new Set(
+              config.values.map(
+                function(optionData) {
+
+                  return (
+                    typeof optionData ===
+                    "object"
+                  )
+                    ? optionData.value
+                    : optionData;
+
+                }
+              )
+            );
+
+          wrapper
+            .querySelectorAll(
+              'input[type="checkbox"]'
+            )
+            .forEach(
+              function(checkbox) {
+
+                checkbox.checked =
+                  true;
+
+              }
+            );
+
+          refreshMultiFilterButton(
+            key
+          );
+
+          renderTimeline();
+
+        }
+      );
+
+    clearButton
+      .addEventListener(
+        "click",
+        function() {
+
+          clearMultiFilter(
+            key,
+            wrapper
+          );
+
+          renderTimeline();
+
+        }
+      );
+
+  }
+
+
+  function refreshMultiFilterButton(key) {
+
+    const wrapper =
+      document.querySelector(
+        '.multi-filter[data-key="' +
+        key +
+        '"]'
+      );
+
+    if (!wrapper) {
+      return;
+    }
+
+    const button =
+      wrapper.querySelector(
+        ".multi-filter-button"
+      );
+
+    const text =
+      wrapper.querySelector(
+        ".multi-filter-button-text"
+      );
+
+    const selected =
+      Array.from(
+        multiSelections[key] ||
+        []
+      );
+
+    const meta =
+      multiFilterMeta[key];
+
+    if (!selected.length) {
+
+      text.textContent =
+        meta.allLabel;
+
+      button.classList
+        .remove(
+          "active"
+        );
+
+      return;
+
+    }
+
+    button.classList
+      .add(
+        "active"
+      );
+
+    if (
+      selected.length === 1
+    ) {
+
+      const selectedValue =
+        selected[0];
+
+      const source =
+        meta.values.find(
+          function(item) {
+
+            const value =
+              typeof item ===
+              "object"
+                ? item.value
+                : item;
+
+            return (
+              value ===
+              selectedValue
+            );
+
+          }
+        );
+
+      text.textContent =
+        (
+          source &&
+          typeof source ===
+          "object"
+        )
+          ? source.label
+          : selectedValue;
+
+      return;
+
+    }
+
+    text.textContent =
+      selected.length +
+      " " +
+      meta.pluralLabel +
+      " selected";
+
+  }
+
+
+  function clearMultiFilter(
+    key,
+    wrapper
+  ) {
+
+    multiSelections[key]
+      .clear();
+
+    wrapper
+      .querySelectorAll(
+        'input[type="checkbox"]'
+      )
+      .forEach(
+        function(checkbox) {
+
+          checkbox.checked =
+            false;
+
+        }
+      );
+
+    refreshMultiFilterButton(
+      key
+    );
+
+  }
+
+
+  function closeAllMultiFilters() {
+
+    document
+      .querySelectorAll(
+        ".multi-filter.open"
+      )
+      .forEach(
+        function(filter) {
+
+          filter.classList
+            .remove(
+              "open"
+            );
+
+        }
+      );
+
+  }
+
+
+  /* ======================================================
+     BUILD FILTERS
+  ====================================================== */
+
+  function buildFilters() {
+
+    buildMultiFilter({
+      containerId:
+        "listFilter",
+
+      key:
+        "list",
+
+      allLabel:
+        "All Lists",
+
+      singularLabel:
+        "List",
+
+      pluralLabel:
+        "Lists",
+
+      values:
+        listData.map(
+          function(list) {
+
+            return {
+              value: list.id,
+              label: list.name
+            };
+
+          }
+        )
     });
 
-    return groups
-      .map(group => {
-        return `
-          <div
-            class="month-label"
-            style="
-              left:${group.start * CONFIG.dayWidth}px;
-              width:${group.count * CONFIG.dayWidth}px;
-            "
-          >
-            ${escapeHTML(group.label)}
-          </div>
-        `;
-      })
-      .join("");
+
+    buildMultiFilter({
+      containerId:
+        "responsibleFilter",
+
+      key:
+        "responsible",
+
+      allLabel:
+        "All Responsible",
+
+      singularLabel:
+        "Responsible",
+
+      pluralLabel:
+        "Responsible",
+
+      values:
+        uniqueSorted(
+          processedCards
+            .map(
+              function(card) {
+
+                return card.responsible;
+
+              }
+            )
+            .filter(Boolean)
+        )
+    });
+
+
+    const labelMap =
+      new Map();
+
+    processedCards
+      .forEach(
+        function(card) {
+
+          (
+            card.labels ||
+            []
+          )
+            .forEach(
+              function(label) {
+
+                if (!label.id) {
+                  return;
+                }
+
+                labelMap.set(
+                  label.id,
+                  {
+                    value: label.id,
+                    label:
+                      label.name ||
+                      label.color ||
+                      "Unnamed label",
+                    color:
+                      label.color || ""
+                  }
+                );
+
+              }
+            );
+
+        }
+      );
+
+    const labels =
+      Array.from(
+        labelMap.values()
+      )
+        .sort(
+          function(a, b) {
+
+            return a.label
+              .localeCompare(
+                b.label,
+                undefined,
+                {
+                  numeric: true,
+                  sensitivity: "base"
+                }
+              );
+
+          }
+        );
+
+    buildMultiFilter({
+      containerId:
+        "labelFilter",
+
+      key:
+        "label",
+
+      allLabel:
+        "All Labels",
+
+      singularLabel:
+        "Label",
+
+      pluralLabel:
+        "Labels",
+
+      values:
+        labels
+    });
+
+
+    buildMultiFilter({
+      containerId:
+        "statusFilter",
+
+      key:
+        "status",
+
+      allLabel:
+        "All Statuses",
+
+      singularLabel:
+        "Status",
+
+      pluralLabel:
+        "Statuses",
+
+      values: [
+        {
+          value: "normal",
+          label: "On track"
+        },
+        {
+          value: "due-soon",
+          label: "Due soon"
+        },
+        {
+          value: "overdue",
+          label: "Overdue"
+        },
+        {
+          value: "baseline-exceeded",
+          label: "Baseline exceeded"
+        },
+        {
+          value: "complete",
+          label: "Complete"
+        }
+      ]
+    });
+
   }
+
+
+  /* ======================================================
+     FILTERING
+  ====================================================== */
+
+  function getFilteredCards() {
+
+    const search =
+      document
+        .getElementById(
+          "searchFilter"
+        )
+        .value
+        .trim()
+        .toLowerCase();
+
+    return processedCards
+      .filter(
+        function(card) {
+
+          if (
+            search &&
+            !card.name
+              .toLowerCase()
+              .includes(search)
+          ) {
+
+            return false;
+
+          }
+
+          if (
+            hasSelections("list") &&
+            !multiSelections.list
+              .has(
+                card.idList
+              )
+          ) {
+
+            return false;
+
+          }
+
+          if (
+            hasSelections(
+              "responsible"
+            ) &&
+            !multiSelections.responsible
+              .has(
+                card.responsible
+              )
+          ) {
+
+            return false;
+
+          }
+
+          if (
+            hasSelections("label")
+          ) {
+
+            const matched =
+              (
+                card.labels ||
+                []
+              )
+                .some(
+                  function(label) {
+
+                    return (
+                      multiSelections.label
+                        .has(
+                          label.id
+                        )
+                    );
+
+                  }
+                );
+
+            if (!matched) {
+              return false;
+            }
+
+          }
+
+          if (
+            hasSelections("status")
+          ) {
+
+            const matches =
+              Array
+                .from(
+                  multiSelections.status
+                )
+                .some(
+                  function(selectedStatus) {
+
+                    if (
+                      selectedStatus ===
+                      "baseline-exceeded"
+                    ) {
+
+                      return (
+                        card.baselineExceeded
+                      );
+
+                    }
+
+                    return (
+                      card.status ===
+                      selectedStatus
+                    );
+
+                  }
+                );
+
+            if (!matches) {
+              return false;
+            }
+
+          }
+
+          return true;
+
+        }
+      );
+
+  }
+
+
+  /* ======================================================
+     HEADERS
+  ====================================================== */
+
+  function renderMonthHeader() {
+
+    const groups = [];
+
+    workingDays
+      .forEach(
+        function(date, index) {
+
+          const key =
+            date.getFullYear() +
+            "-" +
+            date.getMonth();
+
+          let group =
+            groups.find(
+              function(item) {
+
+                return (
+                  item.key === key
+                );
+
+              }
+            );
+
+          if (!group) {
+
+            group = {
+              key: key,
+
+              label:
+                date.toLocaleDateString(
+                  "en-AU",
+                  {
+                    month: "long",
+                    year: "numeric"
+                  }
+                ),
+
+              start:
+                index,
+
+              count:
+                0
+            };
+
+            groups.push(
+              group
+            );
+
+          }
+
+          group.count++;
+
+        }
+      );
+
+    return groups
+      .map(
+        function(group) {
+
+          return `
+            <div
+              class="month-label"
+              style="
+                left:${group.start * CONFIG.dayWidth}px;
+                width:${group.count * CONFIG.dayWidth}px;
+              "
+            >
+              ${escapeHTML(group.label)}
+            </div>
+          `;
+
+        }
+      )
+      .join("");
+
+  }
+
 
   function renderDayHeader() {
-    return workingDays
-      .map((date, index) => {
-        const weekday = date
-          .toLocaleDateString(
-            "en-AU",
-            { weekday: "short" }
-          )
-          .substring(0, 1);
 
-        return `
-          <div
-            class="day"
-            style="left:${index * CONFIG.dayWidth}px"
-          >
-            ${weekday}
-            <strong>${date.getDate()}</strong>
-          </div>
-        `;
-      })
+    return workingDays
+      .map(
+        function(date, index) {
+
+          const weekday =
+            date
+              .toLocaleDateString(
+                "en-AU",
+                {
+                  weekday: "short"
+                }
+              )
+              .substring(0, 1);
+
+          return `
+            <div
+              class="day"
+              style="
+                left:${index * CONFIG.dayWidth}px;
+              "
+            >
+              ${weekday}
+
+              <strong>
+                ${date.getDate()}
+              </strong>
+            </div>
+          `;
+
+        }
+      )
       .join("");
+
   }
 
-  function renderTodayMarker(headerOnly) {
-    const today = parseDateOnly(new Date());
+
+  function renderTodayMarker(
+    headerOnly
+  ) {
+
+    const today =
+      parseDateOnly(
+        new Date()
+      );
 
     if (
       !workingDays.length ||
-      today < workingDays[0] ||
-      today > workingDays[workingDays.length - 1]
+      today <
+        workingDays[0] ||
+      today >
+        workingDays[
+          workingDays.length - 1
+        ]
     ) {
+
+      return "";
+
+    }
+
+    const index =
+      getDateIndex(
+        today,
+        "start"
+      );
+
+    if (index < 0) {
       return "";
     }
 
-    const index = getDateIndex(today, "start");
-
-    if (index < 0) return "";
-
     const left =
-      index * CONFIG.dayWidth +
-      CONFIG.dayWidth / 2;
+      (
+        index *
+        CONFIG.dayWidth
+      ) +
+      (
+        CONFIG.dayWidth /
+        2
+      );
 
     if (headerOnly) {
+
       return `
         <div
           class="today-label"
@@ -1208,6 +2920,7 @@
           TODAY
         </div>
       `;
+
     }
 
     return `
@@ -1216,16 +2929,22 @@
         style="left:${left}px"
       ></div>
     `;
+
   }
 
+
   function renderHeader() {
+
     const width =
-      workingDays.length * CONFIG.dayWidth;
+      workingDays.length *
+      CONFIG.dayWidth;
 
     return `
       <div class="timeline-header">
 
-        <div class="timeline-left header-left">
+        <div
+          class="timeline-left header-left"
+        >
           Activity
         </div>
 
@@ -1233,6 +2952,7 @@
           class="header-track"
           style="width:${width}px"
         >
+
           <div class="months">
             ${renderMonthHeader()}
           </div>
@@ -1241,22 +2961,39 @@
             ${renderDayHeader()}
             ${renderTodayMarker(true)}
           </div>
+
         </div>
 
       </div>
     `;
+
   }
 
+
+  /* ======================================================
+     STATUS
+  ====================================================== */
+
   function statusText(card) {
-    if (card.status === "overdue") {
+
+    if (
+      card.status ===
+      "overdue"
+    ) {
       return "⚑ OVERDUE";
     }
 
-    if (card.status === "due-soon") {
+    if (
+      card.status ===
+      "due-soon"
+    ) {
       return "⚑ DUE SOON";
     }
 
-    if (card.status === "complete") {
+    if (
+      card.status ===
+      "complete"
+    ) {
       return "✓ COMPLETE";
     }
 
@@ -1264,59 +3001,143 @@
       card.baselineExceeded &&
       card.variance > 0
     ) {
-      return `+${card.variance}d BASELINE`;
+
+      return (
+        "+" +
+        card.variance +
+        "d BASELINE"
+      );
+
     }
 
     return "";
+
   }
 
-  function renderCardRow(card) {
-    const current = getBarGeometry(
-      card.currentStart,
-      card.currentDue
-    );
 
-    const baseline = getBarGeometry(
-      card.baselineStart,
-      card.baselineFinish
-    );
+  /* ======================================================
+     CARD ROW
+  ====================================================== */
+
+  function renderCardRow(card) {
+
+    const current =
+      getBarGeometry(
+        card.currentStart,
+        card.currentDue
+      );
+
+    const baseline =
+      getBarGeometry(
+        card.baselineStart,
+        card.baselineFinish
+      );
 
     const trackWidth =
-      workingDays.length * CONFIG.dayWidth;
+      workingDays.length *
+      CONFIG.dayWidth;
 
-    const labels = (card.labels || [])
-      .slice(0, 3)
-      .map(label => {
-        return `
-          <span class="label-chip">
-            ${escapeHTML(
-              label.name ||
-              label.color ||
-              "Label"
-            )}
-          </span>
-        `;
-      })
-      .join("");
 
-    const barLabels = (card.labels || [])
-      .slice(0, 2)
-      .map(label => {
-        return `
-          <span class="activity-label">
-            ${escapeHTML(
-              label.name ||
-              label.color ||
-              "Label"
-            )}
-          </span>
-        `;
-      })
-      .join("");
+    const leftLabels =
+      (
+        card.labels ||
+        []
+      )
+        .slice(0, 3)
+        .map(
+          function(label) {
+
+            return `
+              <span
+                class="label-chip"
+                style="${labelStyle(label.color)}"
+              >
+                ${escapeHTML(
+                  label.name ||
+                  label.color ||
+                  "Label"
+                )}
+              </span>
+            `;
+
+          }
+        )
+        .join("");
+
+
+    const barLabels =
+      (
+        card.labels ||
+        []
+      )
+        .slice(0, 2)
+        .map(
+          function(label) {
+
+            return `
+              <span
+                class="activity-label"
+                style="${labelStyle(label.color)}"
+              >
+                ${escapeHTML(
+                  label.name ||
+                  label.color ||
+                  "Label"
+                )}
+              </span>
+            `;
+
+          }
+        )
+        .join("");
+
 
     let currentHTML = "";
 
     if (current) {
+
+      const tooltip = [
+        card.name,
+
+        card.currentStart
+          ? (
+              "Start: " +
+              formatShortDate(
+                card.currentStart
+              )
+            )
+          : "",
+
+        card.currentDue
+          ? (
+              "Due: " +
+              formatShortDate(
+                card.currentDue
+              )
+            )
+          : "",
+
+        card.baselineStart
+          ? (
+              "Baseline Start: " +
+              formatShortDate(
+                card.baselineStart
+              )
+            )
+          : "",
+
+        card.baselineFinish
+          ? (
+              "Baseline Finish: " +
+              formatShortDate(
+                card.baselineFinish
+              )
+            )
+          : ""
+      ]
+        .filter(Boolean)
+        .join(" | ");
+
       currentHTML = `
         <div
           class="activity ${card.status}"
@@ -1325,52 +3146,63 @@
             left:${current.left}px;
             width:${current.width}px;
           "
-          title="
-            ${escapeHTML(card.name)}
-            | Start: ${escapeHTML(formatShortDate(card.currentStart))}
-            | Due: ${escapeHTML(formatShortDate(card.currentDue))}
-          "
+          title="${escapeHTML(tooltip)}"
         >
+
           <div class="activity-title">
             ${escapeHTML(card.name)}
           </div>
 
           <div class="activity-bottom">
+
             ${barLabels}
 
             ${
               statusText(card)
                 ? `
                   <span class="status-badge">
-                    ${escapeHTML(statusText(card))}
+                    ${escapeHTML(
+                      statusText(card)
+                    )}
                   </span>
                 `
                 : ""
             }
+
           </div>
+
         </div>
       `;
+
     }
+
 
     let baselineHTML = "";
 
     if (baseline) {
+
       baselineHTML = `
         <div
           class="baseline"
-          title="
-            Baseline:
-            ${escapeHTML(formatShortDate(card.baselineStart))}
-            -
-            ${escapeHTML(formatShortDate(card.baselineFinish))}
-          "
           style="
             left:${baseline.left}px;
             width:${baseline.width}px;
           "
+          title="${escapeHTML(
+            "Baseline: " +
+            formatShortDate(
+              card.baselineStart
+            ) +
+            " – " +
+            formatShortDate(
+              card.baselineFinish
+            )
+          )}"
         ></div>
       `;
+
     }
+
 
     return `
       <div class="timeline-row">
@@ -1379,12 +3211,13 @@
           class="card-info"
           data-card-id="${card.id}"
         >
+
           <div class="card-title">
             ${escapeHTML(card.name)}
           </div>
 
           <div class="card-meta">
-            ${labels}
+            ${leftLabels}
           </div>
 
           ${
@@ -1393,51 +3226,61 @@
                 <div class="responsible">
                   Responsible:
                   <strong>
-                    ${escapeHTML(card.responsible)}
+                    ${escapeHTML(
+                      card.responsible
+                    )}
                   </strong>
                 </div>
               `
               : ""
           }
+
         </div>
 
         <div
           class="track"
-          style="width:${trackWidth}px"
+          style="
+            width:${trackWidth}px;
+          "
         >
+
           ${renderTodayMarker(false)}
+
           ${currentHTML}
+
           ${baselineHTML}
+
         </div>
 
       </div>
     `;
+
   }
 
-  function bindCardClicks() {
-    document
-      .querySelectorAll("[data-card-id]")
-      .forEach(element => {
-        element.addEventListener("click", function () {
-          const cardId = this.dataset.cardId;
 
-          if (cardId) {
-            t.showCard(cardId);
-          }
-        });
-      });
-  }
+  /* ======================================================
+     RENDER
+  ====================================================== */
 
   function renderTimeline() {
-    const filtered = getFilteredCards();
+
+    const filtered =
+      getFilteredCards();
 
     const timeline =
-      document.getElementById("timeline");
+      document.getElementById(
+        "timeline"
+      );
 
     const summary =
-      document.getElementById("summary");
+      document.getElementById(
+        "summary"
+      );
 
-    if (!processedCards.length) {
+    if (
+      !processedCards.length
+    ) {
+
       timeline.innerHTML = `
         <div class="message">
           No cards with current or Baseline dates were found.
@@ -1448,181 +3291,443 @@
         "No timeline activities found.";
 
       return;
+
     }
 
     const width =
-      workingDays.length * CONFIG.dayWidth;
+      workingDays.length *
+      CONFIG.dayWidth;
 
-    let html = renderHeader();
+    let html =
+      renderHeader();
 
-    listData.forEach(list => {
-      const cards = filtered.filter(
-        card => card.idList === list.id
+    listData
+      .forEach(
+        function(list) {
+
+          const cards =
+            filtered.filter(
+              function(card) {
+
+                return (
+                  card.idList ===
+                  list.id
+                );
+
+              }
+            );
+
+          if (!cards.length) {
+            return;
+          }
+
+          html += `
+            <div class="list-row">
+
+              <div class="list-title">
+                ${escapeHTML(list.name)}
+              </div>
+
+              <div
+                class="list-track"
+                style="
+                  width:${width}px;
+                "
+              ></div>
+
+            </div>
+          `;
+
+          cards.forEach(
+            function(card) {
+
+              html +=
+                renderCardRow(card);
+
+            }
+          );
+
+        }
       );
 
-      if (!cards.length) return;
+    timeline.style
+      .setProperty(
+        "--timeline-width",
+        width + "px"
+      );
 
-      html += `
-        <div class="list-row">
-          <div class="list-title">
-            ${escapeHTML(list.name)}
-          </div>
-
-          <div
-            class="list-track"
-            style="width:${width}px"
-          ></div>
-        </div>
-      `;
-
-      cards.forEach(card => {
-        html += renderCardRow(card);
-      });
-    });
-
-    timeline.style.setProperty(
-      "--timeline-width",
-      width + "px"
-    );
-
-    timeline.innerHTML = html;
+    timeline.innerHTML =
+      html;
 
     summary.textContent =
-      `${filtered.length} of ${processedCards.length} activities shown`;
+      filtered.length +
+      " of " +
+      processedCards.length +
+      " activities shown";
 
     bindCardClicks();
+
   }
 
+
+  /* ======================================================
+     OPEN CARD
+  ====================================================== */
+
+  function bindCardClicks() {
+
+    document
+      .querySelectorAll(
+        "[data-card-id]"
+      )
+      .forEach(
+        function(element) {
+
+          element.addEventListener(
+            "click",
+            function() {
+
+              const cardId =
+                this.dataset.cardId;
+
+              if (cardId) {
+
+                t.showCard(
+                  cardId
+                );
+
+              }
+
+            }
+          );
+
+        }
+      );
+
+  }
+
+
+  /* ======================================================
+     CLEAR FILTERS
+  ====================================================== */
+
+  function clearFilters() {
+
+    document
+      .getElementById(
+        "searchFilter"
+      )
+      .value = "";
+
+    Object
+      .keys(
+        multiSelections
+      )
+      .forEach(
+        function(key) {
+
+          multiSelections[key]
+            .clear();
+
+        }
+      );
+
+    document
+      .querySelectorAll(
+        '.multi-filter input[type="checkbox"]'
+      )
+      .forEach(
+        function(checkbox) {
+
+          checkbox.checked =
+            false;
+
+        }
+      );
+
+    Object
+      .keys(
+        multiSelections
+      )
+      .forEach(
+        function(key) {
+
+          refreshMultiFilterButton(
+            key
+          );
+
+        }
+      );
+
+    closeAllMultiFilters();
+
+    renderTimeline();
+
+  }
+
+
+  /* ======================================================
+     LOAD TRELLO
+  ====================================================== */
+
   async function loadData() {
+
     try {
-      const restApi = await t.getRestApi();
+
+      const restApi =
+        await t.getRestApi();
 
       const authorized =
-        await restApi.isAuthorized();
+        await restApi
+          .isAuthorized();
 
       if (!authorized) {
-  document.getElementById("timeline").innerHTML = `
-    <div class="message">
-      <p>
-        Project Timeline needs permission to read this Trello board.
-      </p>
 
-      <button
-        id="authorizeTrello"
-        type="button"
-        style="
-          background:#434E46;
-          color:#FFFBF2;
-          border:0;
-          border-radius:6px;
-          padding:10px 18px;
-          font-weight:700;
-          cursor:pointer;
-        "
-      >
-        Authorize Trello
-      </button>
-    </div>
-  `;
+        document
+          .getElementById(
+            "timeline"
+          )
+          .innerHTML = `
+            <div class="message">
 
-  document.getElementById("summary").textContent =
-    "Authorization required.";
+              <p>
+                Project Timeline needs permission to read this Trello board.
+              </p>
 
-  document
-    .getElementById("authorizeTrello")
-    .addEventListener("click", async function () {
-      try {
-        await restApi.authorize({
-          scope: "read",
-          expiration: "never"
-        });
+              <button
+                id="authorizeTrello"
+                class="authorize-button"
+                type="button"
+              >
+                Authorize Trello
+              </button>
 
-        window.location.reload();
+            </div>
+          `;
 
-      } catch (error) {
-        console.error("Trello authorization failed:", error);
+        document
+          .getElementById(
+            "summary"
+          )
+          .textContent =
+            "Authorization required.";
+
+        document
+          .getElementById(
+            "authorizeTrello"
+          )
+          .addEventListener(
+            "click",
+            async function() {
+
+              try {
+
+                await restApi
+                  .authorize({
+                    scope: "read",
+                    expiration: "never"
+                  });
+
+                window.location.reload();
+
+              } catch (error) {
+
+                console.error(
+                  "Trello authorization failed:",
+                  error
+                );
+
+              }
+
+            }
+          );
+
+        return;
+
       }
-    });
 
-  return;
-}
 
       const basicBoard =
-        await t.board("id", "name");
+        await t.board(
+          "id",
+          "name"
+        );
 
       const token =
-        await restApi.getToken();
-
-      const key =
-        TRELLO_API_KEY;
+        await restApi
+          .getToken();
 
       const boardId =
         basicBoard.id;
 
+      const key =
+        TRELLO_API_KEY;
+
+
       const boardResponse =
         await fetch(
-          `https://api.trello.com/1/boards/${boardId}?fields=id,name&customFields=true&key=${encodeURIComponent(key)}&token=${encodeURIComponent(token)}`
+          "https://api.trello.com/1/boards/" +
+          boardId +
+          "?fields=id,name" +
+          "&customFields=true" +
+          "&key=" +
+          encodeURIComponent(key) +
+          "&token=" +
+          encodeURIComponent(token)
         );
+
+      if (!boardResponse.ok) {
+        throw new Error(
+          "Board request failed."
+        );
+      }
 
       boardData =
         await boardResponse.json();
 
+
       const listsResponse =
         await fetch(
-          `https://api.trello.com/1/boards/${boardId}/lists?fields=id,name&key=${encodeURIComponent(key)}&token=${encodeURIComponent(token)}`
+          "https://api.trello.com/1/boards/" +
+          boardId +
+          "/lists" +
+          "?fields=id,name" +
+          "&key=" +
+          encodeURIComponent(key) +
+          "&token=" +
+          encodeURIComponent(token)
         );
+
+      if (!listsResponse.ok) {
+        throw new Error(
+          "List request failed."
+        );
+      }
 
       listData =
         await listsResponse.json();
 
+
       const cardsResponse =
-  await fetch(
-    `https://api.trello.com/1/boards/${boardId}/cards?fields=id,name,start,due,dueComplete,idList,url,labels&customFieldItems=true&key=${encodeURIComponent(key)}&token=${encodeURIComponent(token)}`
-  );
+        await fetch(
+          "https://api.trello.com/1/boards/" +
+          boardId +
+          "/cards" +
+          "?fields=id,name,start,due,dueComplete,idList,url,labels" +
+          "&customFieldItems=true" +
+          "&key=" +
+          encodeURIComponent(key) +
+          "&token=" +
+          encodeURIComponent(token)
+        );
+
+      if (!cardsResponse.ok) {
+        throw new Error(
+          "Card request failed."
+        );
+      }
 
       cardData =
         await cardsResponse.json();
 
+
       buildCustomFieldMap();
+
       processCards();
-      calculateRange(processedCards);
+
+      calculateRange(
+        processedCards
+      );
+
       buildWorkingDays();
-      populateFilters();
+
+      buildFilters();
+
       renderTimeline();
 
+
     } catch (error) {
+
       console.error(error);
 
-      document.getElementById("timeline").innerHTML = `
-        <div class="message error">
-          Could not load the Trello timeline.
-        </div>
-      `;
+      document
+        .getElementById(
+          "timeline"
+        )
+        .innerHTML = `
+          <div class="message error">
+            Could not load the Trello timeline.
+          </div>
+        `;
 
-      document.getElementById("summary").textContent =
-        "Timeline failed to load.";
+      document
+        .getElementById(
+          "summary"
+        )
+        .textContent =
+          "Timeline failed to load.";
+
     }
+
   }
 
+
+  /* ======================================================
+     EVENTS
+  ====================================================== */
+
   document
-  .getElementById("searchFilter")
-  .addEventListener("input", renderTimeline);
+    .getElementById(
+      "searchFilter"
+    )
+    .addEventListener(
+      "input",
+      renderTimeline
+    );
 
-document
-  .getElementById("responsibleFilter")
-  .addEventListener("change", renderTimeline);
 
-document
-  .getElementById("labelFilter")
-  .addEventListener("change", renderTimeline);
+  document
+    .getElementById(
+      "clearFilters"
+    )
+    .addEventListener(
+      "click",
+      clearFilters
+    );
 
-document
-  .getElementById("statusFilter")
-  .addEventListener("change", renderTimeline);
 
-document
-  .getElementById("listFilterOptions")
-  .addEventListener("change", renderTimeline);
+  document
+    .addEventListener(
+      "click",
+      function() {
+
+        closeAllMultiFilters();
+
+      }
+    );
+
+
+  document
+    .addEventListener(
+      "keydown",
+      function(event) {
+
+        if (
+          event.key ===
+          "Escape"
+        ) {
+
+          closeAllMultiFilters();
+
+        }
+
+      }
+    );
+
+
+  /* ======================================================
+     START
+  ====================================================== */
 
   loadData();
 </script>
