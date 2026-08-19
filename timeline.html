@@ -1604,22 +1604,25 @@
     }
   }
 
-  [
-    "searchFilter",
-    "listFilter",
-    "responsibleFilter",
-    "labelFilter",
-    "statusFilter"
-  ].forEach(id => {
-    document
-      .getElementById(id)
-      .addEventListener(
-        id === "searchFilter"
-          ? "input"
-          : "change",
-        renderTimeline
-      );
-  });
+  document
+  .getElementById("searchFilter")
+  .addEventListener("input", renderTimeline);
+
+document
+  .getElementById("responsibleFilter")
+  .addEventListener("change", renderTimeline);
+
+document
+  .getElementById("labelFilter")
+  .addEventListener("change", renderTimeline);
+
+document
+  .getElementById("statusFilter")
+  .addEventListener("change", renderTimeline);
+
+document
+  .getElementById("listFilterOptions")
+  .addEventListener("change", renderTimeline);
 
   loadData();
 </script>
