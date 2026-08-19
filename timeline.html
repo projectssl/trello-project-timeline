@@ -984,11 +984,28 @@
     const labelFilter =
       document.getElementById("labelFilter");
 
+        const listFilterOptions =
+      document.getElementById("listFilterOptions");
+
+    listFilterOptions.innerHTML = "";
+
     listData.forEach(list => {
-      const option = document.createElement("option");
-      option.value = list.id;
-      option.textContent = list.name;
-      listFilter.appendChild(option);
+      const row = document.createElement("label");
+      row.className = "multi-option";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = list.id;
+      checkbox.dataset.filter = "list";
+
+      const text = document.createElement("span");
+      text.className = "multi-option-label";
+      text.textContent = list.name;
+
+      row.appendChild(checkbox);
+      row.appendChild(text);
+
+      listFilterOptions.appendChild(row);
     });
 
     [
