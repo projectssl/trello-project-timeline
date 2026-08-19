@@ -1051,8 +1051,13 @@
       .trim()
       .toLowerCase();
 
-    const list =
-      document.getElementById("listFilter").value;
+    const selectedLists = [
+  ...document.querySelectorAll(
+    '#listFilterOptions input[type="checkbox"]:checked'
+  )
+].map(
+  checkbox => checkbox.value
+);
 
     const responsible =
       document.getElementById("responsibleFilter").value;
@@ -1071,9 +1076,12 @@
         return false;
       }
 
-      if (list && card.idList !== list) {
-        return false;
-      }
+      if (
+  selectedLists.length &&
+  !selectedLists.includes(card.idList)
+) {
+  return false;
+}
 
       if (
         responsible &&
