@@ -418,11 +418,17 @@
     </div>
 
     <div class="filter">
-      <label for="listFilter">List</label>
-      <select id="listFilter">
-        <option value="">All lists</option>
-      </select>
+  <label>List</label>
+
+  <details class="multi-filter" id="listFilter">
+    <summary>All lists</summary>
+
+    <div
+      class="multi-filter-options"
+      id="listFilterOptions">
     </div>
+  </details>
+</div>
 
     <div class="filter">
       <label for="responsibleFilter">Responsible</label>
