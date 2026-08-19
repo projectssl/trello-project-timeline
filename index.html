@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Timeline Power-Up</title>
+</head>
+<body>
+
+<script src="https://p.trellocdn.com/power-up.min.js"></script>
+
+<script>
+  const BASE_URL = new URL(".", window.location.href).href;
+
+  window.TrelloPowerUp.initialize({
+    "board-buttons": function (t) {
+      return [
+        {
+          text: "Project Timeline",
+          condition: "signedIn",
+          callback: function (t) {
+            return t.modal({
+              url: BASE_URL + "timeline.html",
+              title: "Project Timeline",
+              fullscreen: true,
+              accentColor: "#434E46"
+            });
+          }
+        }
+      ];
+    }
+  });
+</script>
+
+</body>
+</html>
