@@ -1459,8 +1459,8 @@
         await listsResponse.json();
 
       const cardsResponse =
-        await fetch(
-          `https://api.trello.com/1/boards/${boardId}/cards?fields=id,name,start,due,dueComplete,idList,url,labels&customFieldItems=true&key=${encodeURIComponent(key)}&token=${encodeURIComponent(token)}`
+  await fetch(
+    `https://api.trello.com/1/boards/${boardId}/cards?fields=id,name,start,due,dueComplete,idList,url,labels&customFieldItems=true&key=${encodeURIComponent(key)}&token=${encodeURIComponent(token)}`
   );
 
       cardData =
