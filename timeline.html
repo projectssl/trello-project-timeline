@@ -3376,35 +3376,54 @@
 
   function bindCardClicks() {
 
-    document
-      .querySelectorAll(
-        "[data-card-id]"
-      )
-      .forEach(
-        function(element) {
+  document
+    .querySelectorAll(
+      "[data-card-id]"
+    )
+    .forEach(
+      function(element) {
 
-          element.addEventListener(
-            "click",
-            function() {
+        element.addEventListener(
+          "click",
+          function(event) {
 
-              const cardId =
-                this.dataset.cardId;
+            event.preventDefault();
+            event.stopPropagation();
 
-              if (cardId) {
+            const cardId =
+              this.dataset.cardId;
 
-                t.showCard(
-                  cardId
-                );
+            if (!cardId) {
+              return;
+            }
 
-              }
+            const card =
+              cardData.find(
+                function(item) {
+                  return item.id === cardId;
+                }
+              );
+
+            if (
+              card &&
+              card.url
+            ) {
+
+              window.open(
+                card.url,
+                "_blank",
+                "noopener,noreferrer"
+              );
 
             }
-          );
 
-        }
-      );
+          }
+        );
 
-  }
+      }
+    );
+
+}
 
 
   /* ======================================================
