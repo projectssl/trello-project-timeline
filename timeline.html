@@ -1384,17 +1384,51 @@
         await restApi.isAuthorized();
 
       if (!authorized) {
-        document.getElementById("timeline").innerHTML = `
-          <div class="message">
-            Trello authorization is required for this timeline.
-          </div>
-        `;
+  document.getElementById("timeline").innerHTML = `
+    <div class="message">
+      <p>
+        Project Timeline needs permission to read this Trello board.
+      </p>
 
-        document.getElementById("summary").textContent =
-          "Authorization required.";
+      <button
+        id="authorizeTrello"
+        type="button"
+        style="
+          background:#434E46;
+          color:#FFFBF2;
+          border:0;
+          border-radius:6px;
+          padding:10px 18px;
+          font-weight:700;
+          cursor:pointer;
+        "
+      >
+        Authorize Trello
+      </button>
+    </div>
+  `;
 
-        return;
+  document.getElementById("summary").textContent =
+    "Authorization required.";
+
+  document
+    .getElementById("authorizeTrello")
+    .addEventListener("click", async function () {
+      try {
+        await restApi.authorize({
+          scope: "read",
+          expiration: "never"
+        });
+
+        window.location.reload();
+
+      } catch (error) {
+        console.error("Trello authorization failed:", error);
       }
+    });
+
+  return;
+}
 
       const basicBoard =
         await t.board("id", "name");
